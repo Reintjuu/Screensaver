@@ -83,6 +83,63 @@ class Player
 	}
 }
 
+
+// TODO: Needs to be implemented correctly, see http://chimera.labs.oreilly.com/books/1234000001552/ch01.html#s01_9 and 
+// http://webaudioapi.com/samples/shared.js.
+class AudioHelper
+{
+	contextClass: any;
+	audioContext: any;
+	buffer: any;
+
+	constructor()
+	{
+		this.contextClass = (window.AudioContext ||
+		window.webkitAudioContext ||
+		window.mozAudioContext ||
+		window.oAudioContext ||
+		window.msAudioContext);
+
+		if (this.contextClass)
+		{
+			// Web Audio API is available.
+			this.audioContext = new this.contextClass();
+		}
+		else
+		{
+			// Web Audio API is not available. Ask the user to use a supported browser.
+		}
+	}
+
+	load(url:string)
+	{
+		var request = new XMLHttpRequest();
+		request.open('GET', url, true);
+		request.responseType = 'arraybuffer';
+
+		// Decode asynchronously
+		request.onload = function () {
+			this.audioContext.decodeAudioData(request.response, function (theBuffer) {
+				this.buffer = theBuffer;
+			}, this.onError);
+		}
+		request.send();
+	}
+
+	onError()
+	{
+		console.log("Can't load a sound.");
+	}
+
+	playSound(buffer: any)
+	{
+		var source = this.audioContext.createBufferSource();
+		source.buffer = buffer;
+		source.connect(this.audioContext.destination);
+		source.start(0);
+	}
+}
+
 var canvas: any;
 var context: any;
 var background: any;
@@ -106,9 +163,10 @@ function init()
 	background = new Background('images/32-jpg.jpg');
 	ide = new Player('Ide', 'images/Ide.png', 0, 0);
 	lindy = new Player('Lindy', 'images/Lindy.png', canvas.width, canvas.height);
-	hitSound = new Audio('sounds/sfx_hit.mp3');
 
+	hitSound = new Audio('sounds/sfx_hit.mp3');
 	song = new Audio('sounds/nasheed.mp3');
+
 	song.loop = true;
 	song.play();
 }

@@ -4,4 +4,4 @@ This is a TypeScript version of my originally created screensaver in AS3, especi
 Be sure to have Visual Studio with the Web Developer Tools installed. 
 
 # Demo
-There's a demo available at http://teabagentertainment.com//typescriptscreensaver.html!
+There's a demo available at http://teabagentertainment.com/typescriptscreensaver.html!
